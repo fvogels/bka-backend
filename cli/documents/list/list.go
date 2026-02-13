@@ -1,14 +1,30 @@
 package list
 
 import (
+	"bass-backend/config"
 	"bass-backend/database"
+	"bass-backend/database/filters"
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
+const (
+	flagBoekjaar             = "boekjaar"
+	flagBoekjaarShort        = "j"
+	flagBedrijfsnummer       = "bedrijf"
+	flagBedrijfsnummerShort  = "b"
+	flagDocumentNummber      = "document"
+	flagDocumentNummberShort = "d"
+)
+
 type command struct {
 	cobra.Command
+	boekJaar            string
+	bedrijfsnummer      string
+	documentNummerRange string
 }
 
 func New() *cobra.Command {
@@ -25,17 +41,58 @@ func New() *cobra.Command {
 		},
 	}
 
+	result.Flags().StringVarP(&result.boekJaar, flagBoekjaar, flagBoekjaarShort, "", "Boekjaar")
+	result.Flags().StringVarP(&result.bedrijfsnummer, flagBedrijfsnummer, flagBedrijfsnummerShort, "", "Bedrijfsnummer")
+	result.Flags().StringVarP(&result.documentNummerRange, flagDocumentNummber, flagDocumentNummberShort, "", "Documentnummer interval")
+
 	return &result.Command
 }
 
 func (command command) execute() error {
-	path := "bookkeeping.db"
-
-	db, err := database.CreateDatabase(path)
+	db, err := database.OpenDatabase(config.DatabasePath)
 	if err != nil {
-		fmt.Printf("Failed to create database: %s\n", err.Error())
+		fmt.Printf("Failed to open database: %s\n", err.Error())
 	}
-	db.Close()
+	defer db.Close()
+
+	filter := command.buildFilter()
+	documents, err := database.ListDocuments(db, filter)
+	if err != nil {
+		return err
+	}
+
+	formattedDocuments, err := json.MarshalIndent(documents, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to convert documents to JSON format: %w", err)
+	}
+	fmt.Println(string(formattedDocuments))
 
 	return nil
+}
+
+func (command command) buildFilter() filters.Filter {
+	result := []filters.Filter{}
+
+	if command.Flags().Changed(flagBoekjaar) {
+		result = append(result, filters.Boekjaar(command.boekJaar))
+	}
+
+	if command.Flags().Changed(flagBedrijfsnummer) {
+		result = append(result, filters.Bedrijfsnummer(command.bedrijfsnummer))
+	}
+
+	if command.Flags().Changed(flagDocumentNummber) {
+		bounds := strings.Split(command.documentNummerRange, "-")
+
+		if len(bounds) != 2 {
+			panic("invalid documentnummer range")
+		}
+
+		lower := bounds[0]
+		upper := bounds[1]
+
+		result = append(result, filters.DocumentNummerBetween(lower, upper))
+	}
+
+	return filters.And(result...)
 }

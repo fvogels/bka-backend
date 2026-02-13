@@ -5,7 +5,7 @@ type DocumentSegment struct {
 	DocumentNummer            DocumentNummer
 	BoekJaar                  Date
 	Regelnummer               int
-	RegelIdentificatie        rune
+	RegelIdentificatie        string
 	VereffeningDatum          Date
 	VereffeningInvoerDatum    Date
 	VereffeningDocumentNummer DocumentNummer

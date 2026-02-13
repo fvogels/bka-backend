@@ -1,10 +1,9 @@
 package database
 
 import (
+	"bass-backend/util"
 	"database/sql"
-	"errors"
 	"fmt"
-	"os"
 )
 
 func connectToDatabase(path string) (*sql.DB, error) {
@@ -36,7 +35,7 @@ func setJournalMode(db *sql.DB) error {
 }
 
 func CreateDatabase(path string) (*sql.DB, error) {
-	fileExists, err := doesFileExist(path)
+	fileExists, err := util.DoesFileExist(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create database: %w", err)
 	}
@@ -64,22 +63,8 @@ func CreateDatabase(path string) (*sql.DB, error) {
 	return database, nil
 }
 
-func doesFileExist(path string) (bool, error) {
-	_, err := os.Stat(path)
-
-	if err == nil {
-		return true, nil
-	}
-
-	if errors.Is(err, os.ErrNotExist) {
-		return false, nil
-	}
-
-	return false, fmt.Errorf("failed to check if file %s exists: %w", path, err)
-}
-
 func OpenDatabase(path string) (*sql.DB, error) {
-	fileExists, err := doesFileExist(path)
+	fileExists, err := util.DoesFileExist(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}

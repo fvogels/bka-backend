@@ -18,7 +18,7 @@ type documentNummerFilter struct {
 
 func (filter documentNummerFilter) Build() squirrel.Sqlizer {
 	return squirrel.Expr(
-		fmt.Sprintf("%s BETWEEN ? AND ?", names.ColumnDocumentNummer),
+		fmt.Sprintf("%s.%s BETWEEN ? AND ?", names.TableDocumentKop, names.ColumnDocumentNummer),
 		filter.lower,
 		filter.upper,
 	)

@@ -2,6 +2,7 @@ package filters
 
 import (
 	"bass-backend/database/names"
+	"fmt"
 
 	"github.com/Masterminds/squirrel"
 )
@@ -17,5 +18,5 @@ type bedrijfsnummerFilter struct {
 }
 
 func (filter bedrijfsnummerFilter) Build() squirrel.Sqlizer {
-	return squirrel.Eq{names.ColumnBedrijfsNummer: filter.bedrijfsnummer}
+	return squirrel.Eq{fmt.Sprintf("%s.%s", names.TableDocumentKop, names.ColumnBedrijfsNummer): filter.bedrijfsnummer}
 }

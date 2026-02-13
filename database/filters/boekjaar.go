@@ -6,12 +6,12 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-func Boekjaar(boekjaar int) Filter {
+func Boekjaar(boekjaar string) Filter {
 	return boekjaarFilter{boekjaar: boekjaar}
 }
 
 type boekjaarFilter struct {
-	boekjaar int
+	boekjaar string
 }
 
 func (filter boekjaarFilter) Build() squirrel.Sqlizer {

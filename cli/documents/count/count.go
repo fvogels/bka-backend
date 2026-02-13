@@ -10,13 +10,15 @@ import (
 )
 
 const (
-	flagBoekjaar      = "boekjaar"
-	FlagBoekjaarShort = "j"
+	flagBoekjaar            = "boekjaar"
+	flagBoekjaarShort       = "j"
+	flagBedrijfsnummer      = "bedrijf"
+	flagBedrijfsnummerShort = "b"
 )
 
 type command struct {
 	cobra.Command
-	boekJaar              int
+	boekJaar              string
 	bedrijfsnummer        string
 	minimumDocumentNummer int
 	maximumDocumentNummer int
@@ -36,7 +38,8 @@ func New() *cobra.Command {
 		},
 	}
 
-	result.Flags().IntVarP(&result.boekJaar, flagBoekjaar, FlagBoekjaarShort, -1, "Boekjaar")
+	result.Flags().StringVarP(&result.boekJaar, flagBoekjaar, flagBoekjaarShort, "0000", "Boekjaar")
+	result.Flags().StringVarP(&result.bedrijfsnummer, flagBedrijfsnummer, flagBedrijfsnummerShort, "0000", "Bedrijfsnummer")
 
 	return &result.Command
 }
@@ -64,6 +67,10 @@ func (command command) buildFilter() filters.Filter {
 
 	if command.Flags().Changed(flagBoekjaar) {
 		result = append(result, filters.Boekjaar(command.boekJaar))
+	}
+
+	if command.Flags().Changed(flagBedrijfsnummer) {
+		result = append(result, filters.Bedrijfsnummer(command.bedrijfsnummer))
 	}
 
 	return filters.And(result...)

@@ -2,6 +2,7 @@ package root
 
 import (
 	"bass-backend/cli/database"
+	"bass-backend/cli/documents"
 	"bass-backend/cli/server"
 
 	"github.com/spf13/cobra"
@@ -16,6 +17,7 @@ func New() *cobra.Command {
 
 	result.AddCommand(database.New())
 	result.AddCommand(server.New())
+	result.AddCommand(documents.New())
 
 	return &result
 }

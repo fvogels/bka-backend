@@ -9,16 +9,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type importCommand struct {
+type command struct {
 	cobra.Command
 	documentPath string
 	segmentPath  string
 }
 
 func New() *cobra.Command {
-	var result *importCommand
+	var result *command
 
-	result = &importCommand{
+	result = &command{
 		Command: cobra.Command{
 			Use:   "import",
 			Short: "Import CSV data",
@@ -43,7 +43,7 @@ func New() *cobra.Command {
 	return &result.Command
 }
 
-func (command importCommand) execute() error {
+func (command command) execute() error {
 	path := config.DatabasePath
 
 	db, err := database.OpenDatabase(path)

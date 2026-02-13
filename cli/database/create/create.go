@@ -7,14 +7,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type createCommand struct {
+type command struct {
 	cobra.Command
 }
 
 func New() *cobra.Command {
-	var result *createCommand
+	var result *command
 
-	result = &createCommand{
+	result = &command{
 		Command: cobra.Command{
 			Use:   "create",
 			Short: "Create empty database",
@@ -28,7 +28,7 @@ func New() *cobra.Command {
 	return &result.Command
 }
 
-func (command createCommand) execute() error {
+func (command command) execute() error {
 	path := "bookkeeping.db"
 
 	db, err := database.CreateDatabase(path)

@@ -41,7 +41,7 @@ func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
 	).Values(
 		kop.Bedrijfsnummer.String(),
 		kop.DocumentNummer.String(),
-		fmt.Sprintf("%04d", kop.BoekJaar),
+		kop.BoekJaar.String(),
 		kop.DocumentSoort.String(),
 		kop.DocumentDatum.ToYYYYMMSS(),
 		kop.BoekingsDatum.ToYYYYMMSS(),

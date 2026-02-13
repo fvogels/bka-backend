@@ -10,6 +10,6 @@ func NewBoekJaar(str string) BoekJaar {
 	return BoekJaar(str)
 }
 
-func (boekjaar BoekJaar) String() string {
-	return string(boekjaar)
+func (boekmaand BoekJaar) String() string {
+	return string(boekmaand)
 }

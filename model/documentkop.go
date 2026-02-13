@@ -7,7 +7,7 @@ type DocumentKop struct {
 	DocumentSoort  DocumentSoort
 	DocumentDatum  Date
 	BoekingsDatum  Date
-	Boekmaand      int
+	Boekmaand      BoekMaand
 	InvoerDatum    Date
 	InvoerTijd     Time
 }

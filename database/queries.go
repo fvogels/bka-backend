@@ -45,7 +45,7 @@ func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
 		kop.DocumentSoort.String(),
 		kop.DocumentDatum.ToYYYYMMSS(),
 		kop.BoekingsDatum.ToYYYYMMSS(),
-		fmt.Sprintf("%02d", kop.Boekmaand),
+		kop.Boekmaand.String(),
 		kop.InvoerDatum.ToYYYYMMSS(),
 		kop.InvoerTijd.ToHHMMSS(),
 	).ToSql()

@@ -7,13 +7,13 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-func DocumentNummerBetween(lower int, upper int) Filter {
+func DocumentNummerBetween(lower string, upper string) Filter {
 	return documentNummerFilter{lower: lower, upper: upper}
 }
 
 type documentNummerFilter struct {
-	lower int
-	upper int
+	lower string
+	upper string
 }
 
 func (filter documentNummerFilter) Build() squirrel.Sqlizer {

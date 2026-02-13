@@ -3,12 +3,16 @@ package model
 import "fmt"
 
 type DocumentNummer struct {
-	value int
+	value string
 }
 
-func NewDocumentNummer(n int) DocumentNummer {
+func NewDocumentNummer(documentNummer string) DocumentNummer {
+	if len(documentNummer) != 10 {
+		panic("invalid documentnummer")
+	}
+
 	return DocumentNummer{
-		value: n,
+		value: documentNummer,
 	}
 }
 

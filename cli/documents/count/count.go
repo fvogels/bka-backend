@@ -5,23 +5,25 @@ import (
 	"bass-backend/database"
 	"bass-backend/database/filters"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 const (
-	flagBoekjaar            = "boekjaar"
-	flagBoekjaarShort       = "j"
-	flagBedrijfsnummer      = "bedrijf"
-	flagBedrijfsnummerShort = "b"
+	flagBoekjaar             = "boekjaar"
+	flagBoekjaarShort        = "j"
+	flagBedrijfsnummer       = "bedrijf"
+	flagBedrijfsnummerShort  = "b"
+	flagDocumentNummber      = "document"
+	flagDocumentNummberShort = "d"
 )
 
 type command struct {
 	cobra.Command
-	boekJaar              string
-	bedrijfsnummer        string
-	minimumDocumentNummer int
-	maximumDocumentNummer int
+	boekJaar            string
+	bedrijfsnummer      string
+	documentNummerRange string
 }
 
 func New() *cobra.Command {
@@ -38,8 +40,9 @@ func New() *cobra.Command {
 		},
 	}
 
-	result.Flags().StringVarP(&result.boekJaar, flagBoekjaar, flagBoekjaarShort, "0000", "Boekjaar")
-	result.Flags().StringVarP(&result.bedrijfsnummer, flagBedrijfsnummer, flagBedrijfsnummerShort, "0000", "Bedrijfsnummer")
+	result.Flags().StringVarP(&result.boekJaar, flagBoekjaar, flagBoekjaarShort, "", "Boekjaar")
+	result.Flags().StringVarP(&result.bedrijfsnummer, flagBedrijfsnummer, flagBedrijfsnummerShort, "", "Bedrijfsnummer")
+	result.Flags().StringVarP(&result.documentNummerRange, flagDocumentNummber, flagDocumentNummberShort, "", "Documentnummer interval")
 
 	return &result.Command
 }
@@ -71,6 +74,19 @@ func (command command) buildFilter() filters.Filter {
 
 	if command.Flags().Changed(flagBedrijfsnummer) {
 		result = append(result, filters.Bedrijfsnummer(command.bedrijfsnummer))
+	}
+
+	if command.Flags().Changed(flagDocumentNummber) {
+		bounds := strings.Split(command.documentNummerRange, "-")
+
+		if len(bounds) != 2 {
+			panic("invalid documentnummer range")
+		}
+
+		lower := bounds[0]
+		upper := bounds[1]
+
+		result = append(result, filters.DocumentNummerBetween(lower, upper))
 	}
 
 	return filters.And(result...)

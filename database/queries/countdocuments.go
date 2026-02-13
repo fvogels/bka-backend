@@ -59,7 +59,7 @@ func (query *CountDocumentsQuery) WithBoekjaar(boekjaar model.BoekJaar) {
 
 func (query *CountDocumentsQuery) WithDocumentNummerBetween(lower string, upper string) {
 	clause := squirrel.Expr(
-		fmt.Sprintf("%s.%s BETWEEN ? AND ?", names.TableDocumentKop, names.ColumnDocumentNummer),
+		fmt.Sprintf("%s BETWEEN ? AND ?", names.ColumnDocumentNummer),
 		lower,
 		upper,
 	)

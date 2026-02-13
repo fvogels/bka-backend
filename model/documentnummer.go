@@ -8,7 +8,7 @@ type DocumentNummer struct {
 
 func NewDocumentNummer(documentNummer string) DocumentNummer {
 	if len(documentNummer) != 10 {
-		panic("invalid documentnummer")
+		panic(fmt.Sprintf("invalid documentnummer %d", documentNummer))
 	}
 
 	return DocumentNummer{
@@ -21,5 +21,5 @@ func (nummer DocumentNummer) String() string {
 }
 
 func (nummer DocumentNummer) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, nummer.value)), nil
+	return fmt.Appendf(nil, `"%s"`, nummer.value), nil
 }

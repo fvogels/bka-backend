@@ -3,8 +3,8 @@ package count
 import (
 	"bass-backend/config"
 	"bass-backend/database"
-	"bass-backend/database/filters"
 	"bass-backend/database/queries"
+	"bass-backend/model"
 	"fmt"
 	"strings"
 
@@ -55,8 +55,8 @@ func (command command) execute() error {
 	}
 	defer db.Close()
 
-	filter := command.buildFilter()
-	count, err := queries.CountDocuments(db, filter)
+	query := command.buildQuery()
+	count, err := query.Execute(db)
 	if err != nil {
 		return err
 	}
@@ -66,15 +66,15 @@ func (command command) execute() error {
 	return nil
 }
 
-func (command command) buildFilter() filters.Filter {
-	result := []filters.Filter{}
+func (command command) buildQuery() *queries.CountDocumentsQuery {
+	query := queries.CountDocuments()
 
 	if command.Flags().Changed(flagBoekjaar) {
-		result = append(result, filters.Boekjaar(command.boekJaar))
+		query.WithBoekjaar(model.NewBoekJaar(command.boekJaar))
 	}
 
 	if command.Flags().Changed(flagBedrijfsnummer) {
-		result = append(result, filters.Bedrijfsnummer(command.bedrijfsnummer))
+		query.WithBedrijfsnummer(model.NewBedrijfsnummer(command.bedrijfsnummer))
 	}
 
 	if command.Flags().Changed(flagDocumentNummber) {
@@ -87,8 +87,16 @@ func (command command) buildFilter() filters.Filter {
 		lower := bounds[0]
 		upper := bounds[1]
 
-		result = append(result, filters.DocumentNummerBetween(lower, upper))
+		if len(lower) >= 1 && lower[0] == '>' {
+			lower = fmt.Sprintf("%010s", lower[1:])
+		}
+
+		if len(upper) >= 1 && upper[0] == '>' {
+			upper = fmt.Sprintf("%010s", upper[1:])
+		}
+
+		query.WithDocumentNummerBetween(lower, upper)
 	}
 
-	return filters.And(result...)
+	return query
 }

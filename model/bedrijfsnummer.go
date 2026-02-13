@@ -11,7 +11,7 @@ type Bedrijfsnummer struct {
 
 func NewBedrijfsnummer(str string) Bedrijfsnummer {
 	if utf8.RuneCountInString(str) != 4 {
-		panic("invalid bedrijfsnummer")
+		panic(fmt.Sprintf("invalid bedrijfsnummer %s", str))
 	}
 
 	return Bedrijfsnummer{

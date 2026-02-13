@@ -4,6 +4,7 @@ import (
 	"bass-backend/config"
 	"bass-backend/database"
 	"bass-backend/database/filters"
+	"bass-backend/database/queries"
 	"fmt"
 	"strings"
 
@@ -55,7 +56,7 @@ func (command command) execute() error {
 	defer db.Close()
 
 	filter := command.buildFilter()
-	count, err := database.CountDocuments(db, filter)
+	count, err := queries.CountDocuments(db, filter)
 	if err != nil {
 		return err
 	}

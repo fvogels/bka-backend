@@ -3,7 +3,7 @@ package model
 type DocumentKop struct {
 	Bedrijfsnummer Bedrijfsnummer
 	DocumentNummer DocumentNummer
-	BoekJaar       Date
+	BoekJaar       int
 	DocumentSoort  DocumentSoort
 	DocumentDatum  Date
 	BoekingsDatum  Date

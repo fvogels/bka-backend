@@ -1,6 +1,9 @@
 package model
 
-import "unicode/utf8"
+import (
+	"fmt"
+	"unicode/utf8"
+)
 
 type Bedrijfsnummer struct {
 	value string
@@ -18,4 +21,8 @@ func NewBedrijfsnummer(str string) Bedrijfsnummer {
 
 func (nummer Bedrijfsnummer) String() string {
 	return nummer.value
+}
+
+func (nummer Bedrijfsnummer) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, nummer.value)), nil
 }

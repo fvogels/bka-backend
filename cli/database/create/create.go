@@ -1,6 +1,7 @@
 package create
 
 import (
+	"bass-backend/config"
 	"bass-backend/database"
 	"fmt"
 
@@ -29,7 +30,7 @@ func New() *cobra.Command {
 }
 
 func (command command) execute() error {
-	path := "bookkeeping.db"
+	path := config.DatabasePath
 
 	db, err := database.CreateDatabase(path)
 	if err != nil {

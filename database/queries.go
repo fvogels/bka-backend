@@ -1,6 +1,8 @@
 package database
 
 import (
+	"bass-backend/database/filters"
+	"bass-backend/database/names"
 	"bass-backend/model"
 	"database/sql"
 	"fmt"
@@ -8,24 +10,8 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-type SearchPredicate interface {
-	Build() any
-}
-
-type BoekjaarSearchPredicate struct {
-	Boekjaar model.Date
-}
-
-func (predicate BoekjaarSearchPredicate) Build() any {
-	return squirrel.Eq{ColumnBoekJaar: predicate.Boekjaar.ToYYYYMMSS()}
-}
-
-type BedrijfsnummerSearchPredicate struct {
-	Bedrijfsnummer string
-}
-
-func CountDocuments(db *sql.DB, predicate SearchPredicate) (int, error) {
-	query, arguments, err := squirrel.Select("COUNT(*)").From(TableDocumentKop).Where(predicate.Build()).ToSql()
+func CountDocuments(db *sql.DB, filter filters.Filter) (int, error) {
+	query, arguments, err := squirrel.Select("COUNT(*)").From(names.TableDocumentKop).Where(filter.Build()).ToSql()
 
 	if err != nil {
 		return 0, fmt.Errorf("failed to construct SQL query: %w", err)
@@ -42,20 +28,20 @@ func CountDocuments(db *sql.DB, predicate SearchPredicate) (int, error) {
 }
 
 func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
-	query, arguments, err := squirrel.Insert(TableDocumentKop).Columns(
-		ColumnBedrijfsNummer,
-		ColumnDocumentNummer,
-		ColumnBoekJaar,
-		ColumnDocumentSoort,
-		ColumnDocumentDatum,
-		ColumnBoekingDatum,
-		ColumnBoekMaand,
-		ColumnInvoerDatum,
-		ColumnInvoerTijd,
+	query, arguments, err := squirrel.Insert(names.TableDocumentKop).Columns(
+		names.ColumnBedrijfsNummer,
+		names.ColumnDocumentNummer,
+		names.ColumnBoekJaar,
+		names.ColumnDocumentSoort,
+		names.ColumnDocumentDatum,
+		names.ColumnBoekingDatum,
+		names.ColumnBoekMaand,
+		names.ColumnInvoerDatum,
+		names.ColumnInvoerTijd,
 	).Values(
 		kop.Bedrijfsnummer.String(),
 		kop.DocumentNummer.String(),
-		kop.BoekJaar.ToYYYYMMSS(),
+		fmt.Sprintf("%04d", kop.BoekJaar),
 		kop.DocumentSoort.String(),
 		kop.DocumentDatum.ToYYYYMMSS(),
 		kop.BoekingsDatum.ToYYYYMMSS(),
@@ -76,15 +62,15 @@ func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
 }
 
 func InsertDocumentSegment(db *sql.DB, segment model.DocumentSegment) error {
-	query, arguments, err := squirrel.Insert(TableDocumentSegment).Columns(
-		ColumnBedrijfsNummer,
-		ColumnDocumentNummer,
-		ColumnBoekJaar,
-		ColumnBoekingRegelID,
-		ColumnVereffeningDatum,
-		ColumnVereffeningInvoerDatum,
-		ColumnVereffeningsDocumentNummer,
-		ColumnBoekingssleutel,
+	query, arguments, err := squirrel.Insert(names.TableDocumentSegment).Columns(
+		names.ColumnBedrijfsNummer,
+		names.ColumnDocumentNummer,
+		names.ColumnBoekJaar,
+		names.ColumnBoekingRegelID,
+		names.ColumnVereffeningDatum,
+		names.ColumnVereffeningInvoerDatum,
+		names.ColumnVereffeningsDocumentNummer,
+		names.ColumnBoekingssleutel,
 	).Values(
 		segment.Bedrijfsnummer.String(),
 		segment.DocumentNummer.String(),

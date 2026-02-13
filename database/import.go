@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bass-backend/database/names"
 	"database/sql"
 	"encoding/csv"
 	"fmt"
@@ -29,16 +30,16 @@ func importDocumentData(db *sql.DB, reader io.Reader) error {
 		return fmt.Errorf("failed to read csv document data: %w", err)
 	}
 
-	builder := squirrel.Insert(TableDocumentKop).Columns(
-		ColumnBedrijfsNummer,
-		ColumnDocumentNummer,
-		ColumnBoekJaar,
-		ColumnDocumentSoort,
-		ColumnDocumentDatum,
-		ColumnBoekingDatum,
-		ColumnBoekMaand,
-		ColumnInvoerDatum,
-		ColumnInvoerTijd,
+	builder := squirrel.Insert(names.TableDocumentKop).Columns(
+		names.ColumnBedrijfsNummer,
+		names.ColumnDocumentNummer,
+		names.ColumnBoekJaar,
+		names.ColumnDocumentSoort,
+		names.ColumnDocumentDatum,
+		names.ColumnBoekingDatum,
+		names.ColumnBoekMaand,
+		names.ColumnInvoerDatum,
+		names.ColumnInvoerTijd,
 	)
 
 	for _, row := range rows {
@@ -72,16 +73,16 @@ func importSegmentData(db *sql.DB, reader io.Reader) error {
 		return fmt.Errorf("failed to read csv segment data: %w", err)
 	}
 
-	builder := squirrel.Insert(TableDocumentSegment).Columns(
-		ColumnBedrijfsNummer,
-		ColumnDocumentNummer,
-		ColumnBoekJaar,
-		ColumnBoekingsregelNummer,
-		ColumnBoekingRegelID,
-		ColumnVereffeningDatum,
-		ColumnVereffeningInvoerDatum,
-		ColumnVereffeningsDocumentNummer,
-		ColumnBoekingssleutel,
+	builder := squirrel.Insert(names.TableDocumentSegment).Columns(
+		names.ColumnBedrijfsNummer,
+		names.ColumnDocumentNummer,
+		names.ColumnBoekJaar,
+		names.ColumnBoekingsregelNummer,
+		names.ColumnBoekingRegelID,
+		names.ColumnVereffeningDatum,
+		names.ColumnVereffeningInvoerDatum,
+		names.ColumnVereffeningsDocumentNummer,
+		names.ColumnBoekingssleutel,
 	)
 
 	for _, row := range rows {

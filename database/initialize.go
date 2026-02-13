@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bass-backend/database/names"
 	"database/sql"
 	"fmt"
 
@@ -35,21 +36,21 @@ func createHeaderTable(db *sql.DB) error {
 			PRIMARY KEY ({{bedrijfsNummer}}, {{documentNummer}}, {{boekJaar}})
 		)`,
 		map[string]string{
-			"tableName":      TableDocumentKop,
-			"bedrijfsNummer": ColumnBedrijfsNummer,
-			"documentNummer": ColumnDocumentNummer,
-			"boekJaar":       ColumnBoekJaar,
-			"documentSoort":  ColumnDocumentSoort,
-			"documentDatum":  ColumnDocumentDatum,
-			"boekingDatum":   ColumnBoekingDatum,
-			"boekMaand":      ColumnBoekMaand,
-			"invoerDatum":    ColumnInvoerDatum,
-			"invoerTijd":     ColumnInvoerTijd,
+			"tableName":      names.TableDocumentKop,
+			"bedrijfsNummer": names.ColumnBedrijfsNummer,
+			"documentNummer": names.ColumnDocumentNummer,
+			"boekJaar":       names.ColumnBoekJaar,
+			"documentSoort":  names.ColumnDocumentSoort,
+			"documentDatum":  names.ColumnDocumentDatum,
+			"boekingDatum":   names.ColumnBoekingDatum,
+			"boekMaand":      names.ColumnBoekMaand,
+			"invoerDatum":    names.ColumnInvoerDatum,
+			"invoerTijd":     names.ColumnInvoerTijd,
 		},
 	)
 
 	if _, err := db.Exec(statement); err != nil {
-		return fmt.Errorf("failed to create table %s: %w", TableDocumentKop, err)
+		return fmt.Errorf("failed to create table %s: %w", names.TableDocumentKop, err)
 	}
 
 	return nil
@@ -72,22 +73,22 @@ func createSegmentTable(db *sql.DB) error {
 			CONSTRAINT BSEG_FK FOREIGN KEY ({{bedrijfsNummer}}, {{documentNummer}}, {{boekJaar}}) REFERENCES {{documentKop}} ({{bedrijfsNummer}}, {{documentNummer}}, {{boekJaar}})
 		)`,
 		map[string]string{
-			"tableName":                 TableDocumentSegment,
-			"bedrijfsNummer":            ColumnBedrijfsNummer,
-			"documentNummer":            ColumnDocumentNummer,
-			"boekJaar":                  ColumnBoekJaar,
-			"regelNummer":               ColumnBoekingsregelNummer,
-			"regelId":                   ColumnBoekingRegelID,
-			"vereffeningDatum":          ColumnVereffeningDatum,
-			"vereffeningInvoerDatum":    ColumnVereffeningInvoerDatum,
-			"vereffeningDocumentNummer": ColumnVereffeningsDocumentNummer,
-			"boekingSleutel":            ColumnBoekingssleutel,
-			"documentKop":               TableDocumentKop,
+			"tableName":                 names.TableDocumentSegment,
+			"bedrijfsNummer":            names.ColumnBedrijfsNummer,
+			"documentNummer":            names.ColumnDocumentNummer,
+			"boekJaar":                  names.ColumnBoekJaar,
+			"regelNummer":               names.ColumnBoekingsregelNummer,
+			"regelId":                   names.ColumnBoekingRegelID,
+			"vereffeningDatum":          names.ColumnVereffeningDatum,
+			"vereffeningInvoerDatum":    names.ColumnVereffeningInvoerDatum,
+			"vereffeningDocumentNummer": names.ColumnVereffeningsDocumentNummer,
+			"boekingSleutel":            names.ColumnBoekingssleutel,
+			"documentKop":               names.TableDocumentKop,
 		},
 	)
 
 	if _, err := db.Exec(statement); err != nil {
-		return fmt.Errorf("failed to create table %s: %w", TableDocumentSegment, err)
+		return fmt.Errorf("failed to create table %s: %w", names.TableDocumentSegment, err)
 	}
 
 	return nil

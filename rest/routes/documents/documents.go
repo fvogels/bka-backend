@@ -1,4 +1,4 @@
-package listdocuments
+package documents
 
 import (
 	"net/http"

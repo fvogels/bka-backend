@@ -1,7 +1,5 @@
 package model
 
-import "fmt"
-
 type DocumentNummer struct {
 	value string
 }
@@ -17,5 +15,5 @@ func NewDocumentNummer(documentNummer string) DocumentNummer {
 }
 
 func (nummer DocumentNummer) String() string {
-	return fmt.Sprintf("%010d", nummer.value)
+	return nummer.value
 }

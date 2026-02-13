@@ -11,3 +11,7 @@ populate:
 	go run . database import --documents ./documents.csv --segments ./segments.csv
 
 fullinit: clean newdb populate
+
+.PHONY: rest
+rest:
+	go run . server run

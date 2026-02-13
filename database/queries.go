@@ -1,7 +1,7 @@
 package database
 
 import (
-	"bass-backend/cli/model"
+	"bass-backend/model"
 	"database/sql"
 	"fmt"
 

@@ -19,6 +19,7 @@ func ListDocuments() *ListDocumentsQuery {
 		Bedrijfsnummer:         filters.InitBedrijfsnummerFilter(filters.AppendTo(&whereClauses)),
 		Boekjaar:               filters.InitBoekjaarFilter(filters.AppendTo(&whereClauses)),
 		DocumentnummerInterval: filters.InitDocumentnummerInterval(filters.AppendTo(&whereClauses)),
+		Pagination:             InitPagination(100),
 		whereClauses:           &whereClauses,
 	}
 }
@@ -27,6 +28,7 @@ type ListDocumentsQuery struct {
 	filters.Bedrijfsnummer
 	filters.Boekjaar
 	filters.DocumentnummerInterval
+	Pagination
 
 	whereClauses *[]squirrel.Sqlizer
 }

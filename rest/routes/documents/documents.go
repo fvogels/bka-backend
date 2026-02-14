@@ -43,6 +43,7 @@ func (endpoint *listDocumentEndpoint) buildCountQuery() (*queries.CountDocuments
 	query := queries.CountDocuments()
 
 	endpoint.parseBedrijfQueryParameter(query)
+	endpoint.parseBoekjaarQueryParameter(query)
 
 	return query, nil
 }

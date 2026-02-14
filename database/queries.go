@@ -11,15 +11,15 @@ import (
 
 func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
 	query, arguments, err := squirrel.Insert(meta.DocumentKop.Table).Columns(
-		meta.DocumentKop.BedrijfsNummer,
-		meta.DocumentKop.DocumentNummer,
-		meta.DocumentKop.BoekJaar,
-		meta.DocumentKop.DocumentSoort,
-		meta.DocumentKop.DocumentDatum,
-		meta.DocumentKop.BoekingDatum,
-		meta.DocumentKop.BoekMaand,
-		meta.DocumentKop.InvoerDatum,
-		meta.DocumentKop.InvoerTijd,
+		meta.DocumentKop.Bedrijfsnummer,
+		meta.DocumentKop.Documentnummer,
+		meta.DocumentKop.Boekjaar,
+		meta.DocumentKop.Documentsoort,
+		meta.DocumentKop.Documentdatum,
+		meta.DocumentKop.Boekingdatum,
+		meta.DocumentKop.Boekmaand,
+		meta.DocumentKop.Invoerdatum,
+		meta.DocumentKop.Invoertijd,
 	).Values(
 		kop.Bedrijfsnummer.String(),
 		kop.DocumentNummer.String(),
@@ -45,13 +45,13 @@ func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
 
 func InsertDocumentSegment(db *sql.DB, segment model.DocumentSegment) error {
 	query, arguments, err := squirrel.Insert(meta.DocumentSegment.Table).Columns(
-		meta.DocumentSegment.BedrijfsNummer,
-		meta.DocumentSegment.DocumentNummer,
-		meta.DocumentSegment.BoekJaar,
-		meta.DocumentSegment.BoekingRegelID,
-		meta.DocumentSegment.VereffeningDatum,
-		meta.DocumentSegment.VereffeningInvoerDatum,
-		meta.DocumentSegment.VereffeningsDocumentNummer,
+		meta.DocumentSegment.Bedrijfsnummer,
+		meta.DocumentSegment.Documentnummer,
+		meta.DocumentSegment.Boekjaar,
+		meta.DocumentSegment.BoekingregelID,
+		meta.DocumentSegment.Vereffeningdatum,
+		meta.DocumentSegment.Vereffeninginvoerdatum,
+		meta.DocumentSegment.Vereffeningsdocumentnummer,
 		meta.DocumentSegment.Boekingssleutel,
 	).Values(
 		segment.Bedrijfsnummer.String(),

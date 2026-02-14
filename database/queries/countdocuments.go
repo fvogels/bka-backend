@@ -2,7 +2,7 @@ package queries
 
 import (
 	"bass-backend/database/meta"
-	"bass-backend/model"
+	"bass-backend/database/queries/filters"
 	"database/sql"
 	"fmt"
 
@@ -10,11 +10,21 @@ import (
 )
 
 func CountDocuments() *CountDocumentsQuery {
-	return &CountDocumentsQuery{}
+	whereClauses := []squirrel.Sqlizer{}
+
+	return &CountDocumentsQuery{
+		Bedrijfsnummer:         filters.InitBedrijfsnummerFilter(&whereClauses),
+		Boekjaar:               filters.InitBoekjaarFilter(&whereClauses),
+		DocumentnummerInterval: filters.InitDocumentnummerInterval(&whereClauses),
+	}
 }
 
 type CountDocumentsQuery struct {
-	whereClauses []squirrel.Sqlizer
+	filters.Bedrijfsnummer
+	filters.Boekjaar
+	filters.DocumentnummerInterval
+
+	whereClauses *[]squirrel.Sqlizer
 }
 
 func (query *CountDocumentsQuery) Execute(db *sql.DB) (int, error) {
@@ -36,37 +46,11 @@ func (query *CountDocumentsQuery) Execute(db *sql.DB) (int, error) {
 func (query *CountDocumentsQuery) buildSQLQuery() (string, []any, error) {
 	builder := squirrel.Select("COUNT(*)").From(meta.DocumentKop.Table)
 
-	for _, whereClause := range query.whereClauses {
+	for _, whereClause := range *query.whereClauses {
 		builder = builder.Where(whereClause)
 	}
 
 	sqlQuery, arguments, err := builder.ToSql()
 
 	return sqlQuery, arguments, err
-}
-
-func (query *CountDocumentsQuery) WithBedrijfsnummer(bedrijfsnummer model.Bedrijfsnummer) {
-	query.addWhereClause(squirrel.Eq{
-		meta.DocumentKop.BedrijfsNummer: bedrijfsnummer.String(),
-	})
-}
-
-func (query *CountDocumentsQuery) WithBoekjaar(boekjaar model.BoekJaar) {
-	query.addWhereClause(squirrel.Eq{
-		meta.DocumentKop.BoekJaar: boekjaar.String(),
-	})
-}
-
-func (query *CountDocumentsQuery) WithDocumentNummerBetween(lower string, upper string) {
-	clause := squirrel.Expr(
-		fmt.Sprintf("%s BETWEEN ? AND ?", meta.DocumentKop.DocumentNummer),
-		lower,
-		upper,
-	)
-
-	query.addWhereClause(clause)
-}
-
-func (query *CountDocumentsQuery) addWhereClause(clause squirrel.Sqlizer) {
-	query.whereClauses = append(query.whereClauses, clause)
 }

@@ -130,20 +130,20 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 	nameTable := map[string]string{
 		"koptabel":                   meta.DocumentKop.Table,
 		"segmenttabel":               meta.DocumentSegment.Table,
-		"bedrijfsnummer":             meta.DocumentKop.BedrijfsNummer,
-		"documentnummer":             meta.DocumentKop.DocumentNummer,
-		"boekjaar":                   meta.DocumentKop.BoekJaar,
-		"documentsoort":              meta.DocumentKop.DocumentSoort,
-		"documentdatum":              meta.DocumentKop.DocumentDatum,
-		"boekingsdatum":              meta.DocumentKop.BoekingDatum,
-		"boekmaand":                  meta.DocumentKop.BoekMaand,
-		"invoerdatum":                meta.DocumentKop.InvoerDatum,
-		"invoertijd":                 meta.DocumentKop.InvoerTijd,
-		"boekingsregelnummer":        meta.DocumentSegment.BoekingsregelNummer,
-		"boekingsregelidentificatie": meta.DocumentSegment.BoekingRegelID,
-		"vereffeningsdatum":          meta.DocumentSegment.VereffeningDatum,
-		"vereffeningsinvoerdatum":    meta.DocumentSegment.VereffeningInvoerDatum,
-		"vereffeningsdocument":       meta.DocumentSegment.VereffeningsDocumentNummer,
+		"bedrijfsnummer":             meta.DocumentKop.Bedrijfsnummer,
+		"documentnummer":             meta.DocumentKop.Documentnummer,
+		"boekjaar":                   meta.DocumentKop.Boekjaar,
+		"documentsoort":              meta.DocumentKop.Documentsoort,
+		"documentdatum":              meta.DocumentKop.Documentdatum,
+		"boekingsdatum":              meta.DocumentKop.Boekingdatum,
+		"boekmaand":                  meta.DocumentKop.Boekmaand,
+		"invoerdatum":                meta.DocumentKop.Invoerdatum,
+		"invoertijd":                 meta.DocumentKop.Invoertijd,
+		"boekingsregelnummer":        meta.DocumentSegment.Boekingsregelnummer,
+		"boekingsregelidentificatie": meta.DocumentSegment.BoekingregelID,
+		"vereffeningsdatum":          meta.DocumentSegment.Vereffeningdatum,
+		"vereffeningsinvoerdatum":    meta.DocumentSegment.Vereffeninginvoerdatum,
+		"vereffeningsdocument":       meta.DocumentSegment.Vereffeningsdocumentnummer,
 		"boekingssleutel":            meta.DocumentSegment.Boekingssleutel,
 	}
 
@@ -183,19 +183,19 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 
 func (query *ListDocumentsQuery) WithBedrijfsnummer(bedrijfsnummer model.Bedrijfsnummer) {
 	query.addWhereClause(squirrel.Eq{
-		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.BedrijfsNummer): bedrijfsnummer.String(),
+		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.Bedrijfsnummer): bedrijfsnummer.String(),
 	})
 }
 
 func (query *ListDocumentsQuery) WithBoekjaar(boekjaar model.BoekJaar) {
 	query.addWhereClause(squirrel.Eq{
-		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.BoekJaar): boekjaar.String(),
+		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.Boekjaar): boekjaar.String(),
 	})
 }
 
 func (query *ListDocumentsQuery) WithDocumentNummerBetween(lower string, upper string) {
 	clause := squirrel.Expr(
-		fmt.Sprintf("%s.%s BETWEEN ? AND ?", meta.DocumentKop.Table, meta.DocumentKop.DocumentNummer),
+		fmt.Sprintf("%s.%s BETWEEN ? AND ?", meta.DocumentKop.Table, meta.DocumentKop.Documentnummer),
 		lower,
 		upper,
 	)

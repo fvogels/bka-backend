@@ -3,53 +3,53 @@ package meta
 var (
 	DocumentKop = DocumentKopMetadata{
 		Table:          "BKPF",
-		BedrijfsNummer: "BUKRS",
-		DocumentNummer: "BELNR",
-		BoekJaar:       "GJAHR",
-		DocumentSoort:  "BLART",
-		DocumentDatum:  "BLDAT",
-		BoekingDatum:   "BUDAT",
-		BoekMaand:      "MONAT",
-		InvoerDatum:    "CPUDT",
-		InvoerTijd:     "CPUTM",
+		Bedrijfsnummer: "BUKRS",
+		Documentnummer: "BELNR",
+		Boekjaar:       "GJAHR",
+		Documentsoort:  "BLART",
+		Documentdatum:  "BLDAT",
+		Boekingdatum:   "BUDAT",
+		Boekmaand:      "MONAT",
+		Invoerdatum:    "CPUDT",
+		Invoertijd:     "CPUTM",
 	}
 
 	DocumentSegment = DocumentSegmentMetadata{
 		Table:                      "BSEG",
-		BedrijfsNummer:             "BUKRS",
-		DocumentNummer:             "BELNR",
-		BoekJaar:                   "GJAHR",
-		BoekingsregelNummer:        "BUZEI",
-		BoekingRegelID:             "BUZID",
-		VereffeningDatum:           "AUGDT",
-		VereffeningInvoerDatum:     "AUGCP",
-		VereffeningsDocumentNummer: "AUGBL",
+		Bedrijfsnummer:             "BUKRS",
+		Documentnummer:             "BELNR",
+		Boekjaar:                   "GJAHR",
+		Boekingsregelnummer:        "BUZEI",
+		BoekingregelID:             "BUZID",
+		Vereffeningdatum:           "AUGDT",
+		Vereffeninginvoerdatum:     "AUGCP",
+		Vereffeningsdocumentnummer: "AUGBL",
 		Boekingssleutel:            "BSCHL",
 	}
 )
 
 type DocumentKopMetadata struct {
 	Table          string
-	BedrijfsNummer string
-	DocumentNummer string
-	BoekJaar       string
-	DocumentSoort  string
-	DocumentDatum  string
-	BoekingDatum   string
-	BoekMaand      string
-	InvoerDatum    string
-	InvoerTijd     string
+	Bedrijfsnummer string
+	Documentnummer string
+	Boekjaar       string
+	Documentsoort  string
+	Documentdatum  string
+	Boekingdatum   string
+	Boekmaand      string
+	Invoerdatum    string
+	Invoertijd     string
 }
 
 type DocumentSegmentMetadata struct {
 	Table                      string
-	BedrijfsNummer             string
-	DocumentNummer             string
-	BoekJaar                   string
-	BoekingsregelNummer        string
-	BoekingRegelID             string
-	VereffeningDatum           string
-	VereffeningInvoerDatum     string
-	VereffeningsDocumentNummer string
+	Bedrijfsnummer             string
+	Documentnummer             string
+	Boekjaar                   string
+	Boekingsregelnummer        string
+	BoekingregelID             string
+	Vereffeningdatum           string
+	Vereffeninginvoerdatum     string
+	Vereffeningsdocumentnummer string
 	Boekingssleutel            string
 }

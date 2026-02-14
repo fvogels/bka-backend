@@ -11,10 +11,10 @@ type DocumentnummerInterval struct {
 	filter
 }
 
-func InitDocumentnummerInterval(whereClauses *[]squirrel.Sqlizer) DocumentnummerInterval {
+func InitDocumentnummerInterval(storeClause func(squirrel.Sqlizer)) DocumentnummerInterval {
 	return DocumentnummerInterval{
 		filter: filter{
-			whereClauses: whereClauses,
+			storeClause: storeClause,
 		},
 	}
 }
@@ -26,5 +26,5 @@ func (filter Bedrijfsnummer) WithDocumentNummerBetween(lower string, upper strin
 		upper,
 	)
 
-	filter.addWhereClause(clause)
+	filter.storeClause(clause)
 }

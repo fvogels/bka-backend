@@ -12,16 +12,18 @@ type Boekjaar struct {
 	filter
 }
 
-func InitBoekjaarFilter(whereClauses *[]squirrel.Sqlizer) Boekjaar {
+func InitBoekjaarFilter(storeClause func(squirrel.Sqlizer)) Boekjaar {
 	return Boekjaar{
 		filter: filter{
-			whereClauses: whereClauses,
+			storeClause: storeClause,
 		},
 	}
 }
 
 func (filter Bedrijfsnummer) WithBoekjaar(boekjaar model.BoekJaar) {
-	filter.addWhereClause(squirrel.Eq{
+	clause := squirrel.Eq{
 		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.Boekjaar): boekjaar.String(),
-	})
+	}
+
+	filter.storeClause(clause)
 }

@@ -3,9 +3,17 @@ package filters
 import "github.com/Masterminds/squirrel"
 
 type filter struct {
-	whereClauses *[]squirrel.Sqlizer
+	storeClause func(squirrel.Sqlizer)
 }
 
-func (filter filter) addWhereClause(clause squirrel.Sqlizer) {
-	*filter.whereClauses = append(*filter.whereClauses, clause)
+func AssignTo(target *squirrel.Sqlizer) func(squirrel.Sqlizer) {
+	return func(clause squirrel.Sqlizer) {
+		*target = clause
+	}
+}
+
+func AppendTo(slice *[]squirrel.Sqlizer) func(squirrel.Sqlizer) {
+	return func(clause squirrel.Sqlizer) {
+		*slice = append(*slice, clause)
+	}
 }

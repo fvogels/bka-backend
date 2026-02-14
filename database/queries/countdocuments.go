@@ -13,9 +13,10 @@ func CountDocuments() *CountDocumentsQuery {
 	whereClauses := []squirrel.Sqlizer{}
 
 	return &CountDocumentsQuery{
-		Bedrijfsnummer:         filters.InitBedrijfsnummerFilter(&whereClauses),
-		Boekjaar:               filters.InitBoekjaarFilter(&whereClauses),
-		DocumentnummerInterval: filters.InitDocumentnummerInterval(&whereClauses),
+		Bedrijfsnummer:         filters.InitBedrijfsnummerFilter(filters.AppendTo(&whereClauses)),
+		Boekjaar:               filters.InitBoekjaarFilter(filters.AppendTo(&whereClauses)),
+		DocumentnummerInterval: filters.InitDocumentnummerInterval(filters.AppendTo(&whereClauses)),
+		whereClauses:           &whereClauses,
 	}
 }
 

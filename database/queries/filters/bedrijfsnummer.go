@@ -12,16 +12,18 @@ type Bedrijfsnummer struct {
 	filter
 }
 
-func InitBedrijfsnummerFilter(whereClauses *[]squirrel.Sqlizer) Bedrijfsnummer {
+func InitBedrijfsnummerFilter(storeClause func(squirrel.Sqlizer)) Bedrijfsnummer {
 	return Bedrijfsnummer{
 		filter: filter{
-			whereClauses: whereClauses,
+			storeClause: storeClause,
 		},
 	}
 }
 
 func (filter Bedrijfsnummer) WithBedrijfsnummer(bedrijfsnummer model.Bedrijfsnummer) {
-	filter.addWhereClause(squirrel.Eq{
+	clause := squirrel.Eq{
 		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.Bedrijfsnummer): bedrijfsnummer.String(),
-	})
+	}
+
+	filter.storeClause(clause)
 }

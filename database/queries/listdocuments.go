@@ -2,6 +2,7 @@ package queries
 
 import (
 	"bass-backend/database/meta"
+	"bass-backend/database/queries/filters"
 	"bass-backend/model"
 	"bass-backend/util"
 	"database/sql"
@@ -12,11 +13,22 @@ import (
 )
 
 func ListDocuments() *ListDocumentsQuery {
-	return &ListDocumentsQuery{}
+	whereClauses := []squirrel.Sqlizer{}
+
+	return &ListDocumentsQuery{
+		Bedrijfsnummer:         filters.InitBedrijfsnummerFilter(filters.AppendTo(&whereClauses)),
+		Boekjaar:               filters.InitBoekjaarFilter(filters.AppendTo(&whereClauses)),
+		DocumentnummerInterval: filters.InitDocumentnummerInterval(filters.AppendTo(&whereClauses)),
+		whereClauses:           &whereClauses,
+	}
 }
 
 type ListDocumentsQuery struct {
-	whereClauses []squirrel.Sqlizer
+	filters.Bedrijfsnummer
+	filters.Boekjaar
+	filters.DocumentnummerInterval
+
+	whereClauses *[]squirrel.Sqlizer
 }
 
 func (query *ListDocumentsQuery) Execute(db *sql.DB) ([]*model.Document, error) {
@@ -172,37 +184,11 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 		),
 	)
 
-	for _, whereClause := range query.whereClauses {
+	for _, whereClause := range *query.whereClauses {
 		builder = builder.Where(whereClause)
 	}
 
 	sqlQuery, arguments, err := builder.ToSql()
 
 	return sqlQuery, arguments, err
-}
-
-func (query *ListDocumentsQuery) WithBedrijfsnummer(bedrijfsnummer model.Bedrijfsnummer) {
-	query.addWhereClause(squirrel.Eq{
-		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.Bedrijfsnummer): bedrijfsnummer.String(),
-	})
-}
-
-func (query *ListDocumentsQuery) WithBoekjaar(boekjaar model.BoekJaar) {
-	query.addWhereClause(squirrel.Eq{
-		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.Boekjaar): boekjaar.String(),
-	})
-}
-
-func (query *ListDocumentsQuery) WithDocumentNummerBetween(lower string, upper string) {
-	clause := squirrel.Expr(
-		fmt.Sprintf("%s.%s BETWEEN ? AND ?", meta.DocumentKop.Table, meta.DocumentKop.Documentnummer),
-		lower,
-		upper,
-	)
-
-	query.addWhereClause(clause)
-}
-
-func (query *ListDocumentsQuery) addWhereClause(clause squirrel.Sqlizer) {
-	query.whereClauses = append(query.whereClauses, clause)
 }

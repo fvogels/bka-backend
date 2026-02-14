@@ -1,7 +1,7 @@
 package database
 
 import (
-	"bass-backend/database/names"
+	"bass-backend/database/meta"
 	"database/sql"
 	"encoding/csv"
 	"fmt"
@@ -30,16 +30,16 @@ func importDocumentData(db *sql.DB, reader io.Reader) error {
 		return fmt.Errorf("failed to read csv document data: %w", err)
 	}
 
-	builder := squirrel.Insert(names.TableDocumentKop).Columns(
-		names.ColumnBedrijfsNummer,
-		names.ColumnDocumentNummer,
-		names.ColumnBoekJaar,
-		names.ColumnDocumentSoort,
-		names.ColumnDocumentDatum,
-		names.ColumnBoekingDatum,
-		names.ColumnBoekMaand,
-		names.ColumnInvoerDatum,
-		names.ColumnInvoerTijd,
+	builder := squirrel.Insert(meta.DocumentKop.Table).Columns(
+		meta.DocumentKop.BedrijfsNummer,
+		meta.DocumentKop.DocumentNummer,
+		meta.DocumentKop.BoekJaar,
+		meta.DocumentKop.DocumentSoort,
+		meta.DocumentKop.DocumentDatum,
+		meta.DocumentKop.BoekingDatum,
+		meta.DocumentKop.BoekMaand,
+		meta.DocumentKop.InvoerDatum,
+		meta.DocumentKop.InvoerTijd,
 	)
 
 	for _, row := range rows {
@@ -73,16 +73,16 @@ func importSegmentData(db *sql.DB, reader io.Reader) error {
 		return fmt.Errorf("failed to read csv segment data: %w", err)
 	}
 
-	builder := squirrel.Insert(names.TableDocumentSegment).Columns(
-		names.ColumnBedrijfsNummer,
-		names.ColumnDocumentNummer,
-		names.ColumnBoekJaar,
-		names.ColumnBoekingsregelNummer,
-		names.ColumnBoekingRegelID,
-		names.ColumnVereffeningDatum,
-		names.ColumnVereffeningInvoerDatum,
-		names.ColumnVereffeningsDocumentNummer,
-		names.ColumnBoekingssleutel,
+	builder := squirrel.Insert(meta.DocumentSegment.Table).Columns(
+		meta.DocumentSegment.BedrijfsNummer,
+		meta.DocumentSegment.DocumentNummer,
+		meta.DocumentSegment.BoekJaar,
+		meta.DocumentSegment.BoekingsregelNummer,
+		meta.DocumentSegment.BoekingRegelID,
+		meta.DocumentSegment.VereffeningDatum,
+		meta.DocumentSegment.VereffeningInvoerDatum,
+		meta.DocumentSegment.VereffeningsDocumentNummer,
+		meta.DocumentSegment.Boekingssleutel,
 	)
 
 	for _, row := range rows {

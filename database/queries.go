@@ -1,7 +1,7 @@
 package database
 
 import (
-	"bass-backend/database/names"
+	"bass-backend/database/meta"
 	"bass-backend/model"
 	"database/sql"
 	"fmt"
@@ -10,16 +10,16 @@ import (
 )
 
 func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
-	query, arguments, err := squirrel.Insert(names.TableDocumentKop).Columns(
-		names.ColumnBedrijfsNummer,
-		names.ColumnDocumentNummer,
-		names.ColumnBoekJaar,
-		names.ColumnDocumentSoort,
-		names.ColumnDocumentDatum,
-		names.ColumnBoekingDatum,
-		names.ColumnBoekMaand,
-		names.ColumnInvoerDatum,
-		names.ColumnInvoerTijd,
+	query, arguments, err := squirrel.Insert(meta.DocumentKop.Table).Columns(
+		meta.DocumentKop.BedrijfsNummer,
+		meta.DocumentKop.DocumentNummer,
+		meta.DocumentKop.BoekJaar,
+		meta.DocumentKop.DocumentSoort,
+		meta.DocumentKop.DocumentDatum,
+		meta.DocumentKop.BoekingDatum,
+		meta.DocumentKop.BoekMaand,
+		meta.DocumentKop.InvoerDatum,
+		meta.DocumentKop.InvoerTijd,
 	).Values(
 		kop.Bedrijfsnummer.String(),
 		kop.DocumentNummer.String(),
@@ -44,15 +44,15 @@ func InsertDocumentKop(db *sql.DB, kop model.DocumentKop) error {
 }
 
 func InsertDocumentSegment(db *sql.DB, segment model.DocumentSegment) error {
-	query, arguments, err := squirrel.Insert(names.TableDocumentSegment).Columns(
-		names.ColumnBedrijfsNummer,
-		names.ColumnDocumentNummer,
-		names.ColumnBoekJaar,
-		names.ColumnBoekingRegelID,
-		names.ColumnVereffeningDatum,
-		names.ColumnVereffeningInvoerDatum,
-		names.ColumnVereffeningsDocumentNummer,
-		names.ColumnBoekingssleutel,
+	query, arguments, err := squirrel.Insert(meta.DocumentSegment.Table).Columns(
+		meta.DocumentSegment.BedrijfsNummer,
+		meta.DocumentSegment.DocumentNummer,
+		meta.DocumentSegment.BoekJaar,
+		meta.DocumentSegment.BoekingRegelID,
+		meta.DocumentSegment.VereffeningDatum,
+		meta.DocumentSegment.VereffeningInvoerDatum,
+		meta.DocumentSegment.VereffeningsDocumentNummer,
+		meta.DocumentSegment.Boekingssleutel,
 	).Values(
 		segment.Bedrijfsnummer.String(),
 		segment.DocumentNummer.String(),

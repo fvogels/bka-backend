@@ -1,7 +1,7 @@
 package queries
 
 import (
-	"bass-backend/database/names"
+	"bass-backend/database/meta"
 	"bass-backend/model"
 	"database/sql"
 	"fmt"
@@ -34,7 +34,7 @@ func (query *CountDocumentsQuery) Execute(db *sql.DB) (int, error) {
 }
 
 func (query *CountDocumentsQuery) buildSQLQuery() (string, []any, error) {
-	builder := squirrel.Select("COUNT(*)").From(names.TableDocumentKop)
+	builder := squirrel.Select("COUNT(*)").From(meta.DocumentKop.Table)
 
 	for _, whereClause := range query.whereClauses {
 		builder = builder.Where(whereClause)
@@ -47,19 +47,19 @@ func (query *CountDocumentsQuery) buildSQLQuery() (string, []any, error) {
 
 func (query *CountDocumentsQuery) WithBedrijfsnummer(bedrijfsnummer model.Bedrijfsnummer) {
 	query.addWhereClause(squirrel.Eq{
-		names.ColumnBedrijfsNummer: bedrijfsnummer.String(),
+		meta.DocumentKop.BedrijfsNummer: bedrijfsnummer.String(),
 	})
 }
 
 func (query *CountDocumentsQuery) WithBoekjaar(boekjaar model.BoekJaar) {
 	query.addWhereClause(squirrel.Eq{
-		names.ColumnBoekJaar: boekjaar.String(),
+		meta.DocumentKop.BoekJaar: boekjaar.String(),
 	})
 }
 
 func (query *CountDocumentsQuery) WithDocumentNummerBetween(lower string, upper string) {
 	clause := squirrel.Expr(
-		fmt.Sprintf("%s BETWEEN ? AND ?", names.ColumnDocumentNummer),
+		fmt.Sprintf("%s BETWEEN ? AND ?", meta.DocumentKop.DocumentNummer),
 		lower,
 		upper,
 	)

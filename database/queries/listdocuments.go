@@ -1,7 +1,7 @@
 package queries
 
 import (
-	"bass-backend/database/names"
+	"bass-backend/database/meta"
 	"bass-backend/model"
 	"bass-backend/util"
 	"database/sql"
@@ -128,23 +128,23 @@ func (query *ListDocumentsQuery) Execute(db *sql.DB) ([]*model.Document, error) 
 
 func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 	nameTable := map[string]string{
-		"koptabel":                   names.TableDocumentKop,
-		"segmenttabel":               names.TableDocumentSegment,
-		"bedrijfsnummer":             names.ColumnBedrijfsNummer,
-		"documentnummer":             names.ColumnDocumentNummer,
-		"boekjaar":                   names.ColumnBoekJaar,
-		"documentsoort":              names.ColumnDocumentSoort,
-		"documentdatum":              names.ColumnDocumentDatum,
-		"boekingsdatum":              names.ColumnBoekingDatum,
-		"boekmaand":                  names.ColumnBoekMaand,
-		"invoerdatum":                names.ColumnInvoerDatum,
-		"invoertijd":                 names.ColumnInvoerTijd,
-		"boekingsregelnummer":        names.ColumnBoekingsregelNummer,
-		"boekingsregelidentificatie": names.ColumnBoekingRegelID,
-		"vereffeningsdatum":          names.ColumnVereffeningDatum,
-		"vereffeningsinvoerdatum":    names.ColumnVereffeningInvoerDatum,
-		"vereffeningsdocument":       names.ColumnVereffeningsDocumentNummer,
-		"boekingssleutel":            names.ColumnBoekingssleutel,
+		"koptabel":                   meta.DocumentKop.Table,
+		"segmenttabel":               meta.DocumentSegment.Table,
+		"bedrijfsnummer":             meta.DocumentKop.BedrijfsNummer,
+		"documentnummer":             meta.DocumentKop.DocumentNummer,
+		"boekjaar":                   meta.DocumentKop.BoekJaar,
+		"documentsoort":              meta.DocumentKop.DocumentSoort,
+		"documentdatum":              meta.DocumentKop.DocumentDatum,
+		"boekingsdatum":              meta.DocumentKop.BoekingDatum,
+		"boekmaand":                  meta.DocumentKop.BoekMaand,
+		"invoerdatum":                meta.DocumentKop.InvoerDatum,
+		"invoertijd":                 meta.DocumentKop.InvoerTijd,
+		"boekingsregelnummer":        meta.DocumentSegment.BoekingsregelNummer,
+		"boekingsregelidentificatie": meta.DocumentSegment.BoekingRegelID,
+		"vereffeningsdatum":          meta.DocumentSegment.VereffeningDatum,
+		"vereffeningsinvoerdatum":    meta.DocumentSegment.VereffeningInvoerDatum,
+		"vereffeningsdocument":       meta.DocumentSegment.VereffeningsDocumentNummer,
+		"boekingssleutel":            meta.DocumentSegment.Boekingssleutel,
 	}
 
 	builder := squirrel.Select(
@@ -165,7 +165,7 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 			{{vereffeningsdocument}},
 			{{boekingssleutel}}
 		`, nameTable),
-	).From(names.TableDocumentKop).InnerJoin(
+	).From(meta.DocumentKop.Table).InnerJoin(
 		mustache.Render(
 			"{{segmenttabel}} ON {{koptabel}}.{{bedrijfsnummer}} = {{segmenttabel}}.{{bedrijfsnummer}} AND {{koptabel}}.{{documentnummer}} = {{segmenttabel}}.{{documentnummer}} AND {{koptabel}}.{{boekjaar}} = {{segmenttabel}}.{{boekjaar}}",
 			nameTable,
@@ -183,19 +183,19 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 
 func (query *ListDocumentsQuery) WithBedrijfsnummer(bedrijfsnummer model.Bedrijfsnummer) {
 	query.addWhereClause(squirrel.Eq{
-		fmt.Sprintf("%s.%s", names.TableDocumentKop, names.ColumnBedrijfsNummer): bedrijfsnummer.String(),
+		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.BedrijfsNummer): bedrijfsnummer.String(),
 	})
 }
 
 func (query *ListDocumentsQuery) WithBoekjaar(boekjaar model.BoekJaar) {
 	query.addWhereClause(squirrel.Eq{
-		fmt.Sprintf("%s.%s", names.TableDocumentKop, names.ColumnBoekJaar): boekjaar.String(),
+		fmt.Sprintf("%s.%s", meta.DocumentKop.Table, meta.DocumentKop.BoekJaar): boekjaar.String(),
 	})
 }
 
 func (query *ListDocumentsQuery) WithDocumentNummerBetween(lower string, upper string) {
 	clause := squirrel.Expr(
-		fmt.Sprintf("%s.%s BETWEEN ? AND ?", names.TableDocumentKop, names.ColumnDocumentNummer),
+		fmt.Sprintf("%s.%s BETWEEN ? AND ?", meta.DocumentKop.Table, meta.DocumentKop.DocumentNummer),
 		lower,
 		upper,
 	)

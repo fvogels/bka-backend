@@ -5,6 +5,7 @@ import (
 	"bass-backend/model"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,13 +43,14 @@ func (endpoint *listDocumentEndpoint) execute() {
 func (endpoint *listDocumentEndpoint) buildCountQuery() (*queries.CountDocumentsQuery, error) {
 	query := queries.CountDocuments()
 
-	endpoint.parseBedrijfQueryParameter(query)
-	endpoint.parseBoekjaarQueryParameter(query)
+	endpoint.processBedrijfQueryParameter(query)
+	endpoint.processBoekjaarQueryParameter(query)
+	endpoint.processDocumentnummerIntervalQueryParameter(query)
 
 	return query, nil
 }
 
-func (endpoint *listDocumentEndpoint) parseBedrijfQueryParameter(query query) error {
+func (endpoint *listDocumentEndpoint) processBedrijfQueryParameter(query query) error {
 	if bedrijfsnummerString := endpoint.context.Query("bedrijf"); len(bedrijfsnummerString) > 0 {
 		bedrijfsNummer, err := model.ParseBedrijfsnummer(bedrijfsnummerString)
 		if err != nil {
@@ -61,7 +63,7 @@ func (endpoint *listDocumentEndpoint) parseBedrijfQueryParameter(query query) er
 	return nil
 }
 
-func (endpoint *listDocumentEndpoint) parseBoekjaarQueryParameter(query query) error {
+func (endpoint *listDocumentEndpoint) processBoekjaarQueryParameter(query query) error {
 	if boekjaarString := endpoint.context.Query("boekjaar"); len(boekjaarString) > 0 {
 		boekjaar, err := model.ParseBoekJaar(boekjaarString)
 		if err != nil {
@@ -69,6 +71,20 @@ func (endpoint *listDocumentEndpoint) parseBoekjaarQueryParameter(query query) e
 		}
 
 		query.WithBoekjaar(boekjaar)
+	}
+
+	return nil
+}
+
+func (endpoint *listDocumentEndpoint) processDocumentnummerIntervalQueryParameter(query query) error {
+	if documentnummerIntervalString := endpoint.context.Query("document"); len(documentnummerIntervalString) > 0 {
+		bounds := strings.Split(documentnummerIntervalString, "-")
+
+		if len(bounds) != 2 {
+			return fmt.Errorf("invalid documentnummer interval: %s", documentnummerIntervalString)
+		}
+
+		query.WithDocumentNummerBetween(bounds[0], bounds[1])
 	}
 
 	return nil

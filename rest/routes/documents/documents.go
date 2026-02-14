@@ -3,6 +3,7 @@ package documents
 import (
 	"bass-backend/database/queries"
 	"bass-backend/model"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,7 +12,8 @@ import (
 )
 
 type listDocumentEndpoint struct {
-	context *gin.Context
+	context  *gin.Context
+	database *sql.DB
 }
 
 type Response struct {
@@ -24,20 +26,35 @@ type query interface {
 	WithDocumentNummerBetween(lower string, upper string)
 }
 
-func Handle(context *gin.Context) {
+func Handle(database *sql.DB, context *gin.Context) {
 	endpoint := listDocumentEndpoint{
-		context: context,
+		context:  context,
+		database: database,
 	}
 
 	endpoint.execute()
 }
 
 func (endpoint *listDocumentEndpoint) execute() {
-	response := Response{
-		Count: 10,
+	context := endpoint.context
+
+	query, err := endpoint.buildCountQuery()
+	if err != nil {
+		context.String(http.StatusBadRequest, err.Error())
+		return
 	}
 
-	endpoint.context.JSON(http.StatusOK, response)
+	count, err := query.Execute(endpoint.database)
+	if err != nil {
+		context.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response := Response{
+		Count: count,
+	}
+
+	context.JSON(http.StatusOK, response)
 }
 
 func (endpoint *listDocumentEndpoint) buildCountQuery() (*queries.CountDocumentsQuery, error) {

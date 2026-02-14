@@ -57,7 +57,7 @@ func createGinRouter() *gin.Engine {
 }
 
 func (server *Server) defineEndPoints() {
-	server.router.GET("/api/v1/documents", documents.Handle)
+	server.router.GET("/api/v1/documents", server.addDatabaseParameter(documents.Handle))
 }
 
 func (server *Server) run() error {
@@ -72,4 +72,10 @@ func (server *Server) run() error {
 
 func (server *Server) shutdown() {
 	server.database.Close()
+}
+
+func (server *Server) addDatabaseParameter(f func(*sql.DB, *gin.Context)) func(*gin.Context) {
+	return func(context *gin.Context) {
+		f(server.database, context)
+	}
 }

@@ -168,10 +168,10 @@ func (endpoint *documentEndpoint) buildListQuery(pagination *paginationInformati
 }
 
 func (endpoint *documentEndpoint) processBedrijfQueryParameter(query query) error {
-	if bedrijfsnummerString := endpoint.context.Query("bedrijf"); len(bedrijfsnummerString) > 0 {
+	if bedrijfsnummerString := endpoint.context.Query("bedrijfsnummer"); len(bedrijfsnummerString) > 0 {
 		bedrijfsNummer, err := model.ParseBedrijfsnummer(bedrijfsnummerString)
 		if err != nil {
-			return fmt.Errorf("invalid query parameter for bedrijf: %w", err)
+			return fmt.Errorf("invalid query parameter for bedrijfsnummer: %w", err)
 		}
 
 		query.WithBedrijfsnummer(bedrijfsNummer)

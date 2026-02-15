@@ -19,7 +19,7 @@ func ListDocuments() *ListDocumentsQuery {
 		Bedrijfsnummer:         filters.InitBedrijfsnummerFilter(filters.AppendTo(&whereClauses)),
 		Boekjaar:               filters.InitBoekjaarFilter(filters.AppendTo(&whereClauses)),
 		DocumentnummerInterval: filters.InitDocumentnummerInterval(filters.AppendTo(&whereClauses)),
-		Pagination:             InitPagination(100),
+		Pagination:             InitPagination(),
 		whereClauses:           &whereClauses,
 	}
 }

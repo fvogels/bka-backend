@@ -14,4 +14,4 @@ fullinit: clean newdb populate
 
 .PHONY: rest
 rest:
-	go run . server run
+	go run . -v server run

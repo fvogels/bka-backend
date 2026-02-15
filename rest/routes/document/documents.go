@@ -168,10 +168,10 @@ func (endpoint *documentEndpoint) buildListQuery(pagination *paginationInformati
 }
 
 func (endpoint *documentEndpoint) processBedrijfQueryParameter(query query) error {
-	if bedrijfsnummerString := endpoint.context.Query("bedrijfsnummer"); len(bedrijfsnummerString) > 0 {
+	if bedrijfsnummerString := endpoint.context.Query("bedrijf"); len(bedrijfsnummerString) > 0 {
 		bedrijfsNummer, err := model.ParseBedrijfsnummer(bedrijfsnummerString)
 		if err != nil {
-			return fmt.Errorf("invalid query parameter for bedrijfsnummer: %w", err)
+			return fmt.Errorf("invalid query parameter for bedrijf: %w", err)
 		}
 
 		query.WithBedrijfsnummer(bedrijfsNummer)
@@ -184,7 +184,7 @@ func (endpoint *documentEndpoint) processBoekjaarQueryParameter(query query) err
 	if boekjaarString := endpoint.context.Query("boekjaar"); len(boekjaarString) > 0 {
 		boekjaar, err := model.ParseBoekJaar(boekjaarString)
 		if err != nil {
-			return fmt.Errorf("invalid query parameter for bedrijf: %w", err)
+			return fmt.Errorf("invalid query parameter for boekjaar: %w", err)
 		}
 
 		query.WithBoekjaar(boekjaar)
@@ -194,7 +194,7 @@ func (endpoint *documentEndpoint) processBoekjaarQueryParameter(query query) err
 }
 
 func (endpoint *documentEndpoint) processDocumentnummerIntervalQueryParameter(query query) error {
-	if documentnummerIntervalString := endpoint.context.Query("document"); len(documentnummerIntervalString) > 0 {
+	if documentnummerIntervalString := endpoint.context.Query("interval"); len(documentnummerIntervalString) > 0 {
 		bounds := strings.Split(documentnummerIntervalString, "-")
 
 		if len(bounds) != 2 {

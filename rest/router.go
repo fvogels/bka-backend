@@ -3,7 +3,7 @@ package rest
 import (
 	"bass-backend/config"
 	"bass-backend/database"
-	"bass-backend/rest/routes/documents"
+	"bass-backend/rest/routes/document"
 	"database/sql"
 	"fmt"
 
@@ -57,7 +57,7 @@ func createGinRouter() *gin.Engine {
 }
 
 func (server *Server) defineEndPoints() {
-	server.router.GET("/api/v1/documents", server.addDatabaseParameter(documents.Handle))
+	server.router.GET("/api/v1/documents", server.addDatabaseParameter(document.Handle))
 }
 
 func (server *Server) run() error {

@@ -196,5 +196,8 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 	// Add limit/offset to SQL query
 	builder = query.ApplyPagination(builder)
 
+	// Add order
+	builder = builder.OrderBy(meta.DocumentKop.Invoerdatum, meta.DocumentKop.Invoertijd)
+
 	return builder.ToSql()
 }

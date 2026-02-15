@@ -181,16 +181,20 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 		`, nameTable),
 	).From(meta.DocumentKop.Table).InnerJoin(
 		mustache.Render(
-			"{{segmenttabel}} ON {{koptabel}}.{{bedrijfsnummer}} = {{segmenttabel}}.{{bedrijfsnummer}} AND {{koptabel}}.{{documentnummer}} = {{segmenttabel}}.{{documentnummer}} AND {{koptabel}}.{{boekjaar}} = {{segmenttabel}}.{{boekjaar}}",
+			`{{segmenttabel}} ON {{koptabel}}.{{bedrijfsnummer}} = {{segmenttabel}}.{{bedrijfsnummer}} AND
+			 {{koptabel}}.{{documentnummer}} = {{segmenttabel}}.{{documentnummer}} AND
+			 {{koptabel}}.{{boekjaar}} = {{segmenttabel}}.{{boekjaar}}`,
 			nameTable,
 		),
 	)
 
+	// Add where clauses to SQL query
 	for _, whereClause := range *query.whereClauses {
 		builder = builder.Where(whereClause)
 	}
 
-	sqlQuery, arguments, err := builder.ToSql()
+	// Add limit/offset to SQL query
+	builder = query.ApplyPagination(builder)
 
-	return sqlQuery, arguments, err
+	return builder.ToSql()
 }

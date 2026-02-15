@@ -37,7 +37,7 @@ func (pagination *Pagination) WithLimitAndOffset(limit int, offset int) {
 	pagination.withOffset(offset)
 }
 
-func (pagination *Pagination) Apply(query squirrel.SelectBuilder) squirrel.SelectBuilder {
+func (pagination *Pagination) ApplyPagination(query squirrel.SelectBuilder) squirrel.SelectBuilder {
 	if pagination.Offset != nil {
 		query = query.Offset(uint64(*pagination.Offset))
 	}

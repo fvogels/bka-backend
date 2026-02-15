@@ -6,6 +6,9 @@ import (
 	"bass-backend/rest/routes/document"
 	"database/sql"
 	"fmt"
+	"log/slog"
+	"net/http"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -47,6 +50,33 @@ func createGinRouter() *gin.Engine {
 	gin.SetMode(gin.DebugMode)
 
 	router := gin.New()
+	router.Use(func(c *gin.Context) {
+		log := slog.Default()
+
+		log = log.With("start", time.Now())
+		log = log.With("start", time.Now())
+		log = log.With("path", c.Request.URL.Path)
+		log = log.With("query", c.Request.URL.RawQuery)
+
+		c.Next()
+
+		status := c.Writer.Status()
+		log = log.With("status", status)
+		log = log.With("method", c.Request.Method)
+		log = log.With("host", c.Request.Host)
+		log = log.With("route", c.FullPath())
+		log = log.With("end", time.Now())
+		log = log.With("userAgent", c.Request.UserAgent())
+		log = log.With("ip", c.ClientIP())
+		log = log.With("referer", c.Request.Referer())
+
+		isError := http.StatusBadRequest <= status
+		if isError {
+			log.Error("An error occurred while a request was handled")
+		} else {
+			log.Info("Request successfully handled")
+		}
+	})
 
 	corsConfiguration := cors.DefaultConfig()
 	corsConfiguration.AllowAllOrigins = true

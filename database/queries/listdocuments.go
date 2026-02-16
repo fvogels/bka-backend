@@ -197,7 +197,10 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 	builder = query.ApplyPagination(builder)
 
 	// Add order
-	builder = builder.OrderBy(meta.DocumentKop.Invoerdatum, meta.DocumentKop.Invoertijd)
+	builder = builder.OrderBy(
+		meta.DocumentKop.Table+"."+meta.DocumentKop.Bedrijfsnummer,
+		meta.DocumentKop.Table+"."+meta.DocumentKop.Documentnummer,
+		meta.DocumentSegment.Boekingsregelnummer)
 
 	return builder.ToSql()
 }

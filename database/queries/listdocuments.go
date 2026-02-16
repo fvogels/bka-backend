@@ -7,6 +7,7 @@ import (
 	"bass-backend/util"
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/hoisie/mustache"
@@ -144,6 +145,7 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 	nameTable := map[string]string{
 		"koptabel":                   meta.DocumentKop.Table,
 		"segmenttabel":               meta.DocumentSegment.Table,
+		"paginatabel":                "documents_page",
 		"bedrijfsnummer":             meta.DocumentKop.Bedrijfsnummer,
 		"documentnummer":             meta.DocumentKop.Documentnummer,
 		"boekjaar":                   meta.DocumentKop.Boekjaar,
@@ -161,7 +163,31 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 		"boekingssleutel":            meta.DocumentSegment.Boekingssleutel,
 	}
 
-	builder := squirrel.Select(
+	documentQueryBuilder := squirrel.Select(
+		mustache.Render(`
+			{{koptabel}}.{{bedrijfsnummer}},
+			{{koptabel}}.{{documentnummer}},
+			{{koptabel}}.{{boekjaar}}
+		`, nameTable),
+	).From(meta.DocumentKop.Table)
+
+	// Add where clauses to SQL query
+	for _, whereClause := range *query.whereClauses {
+		documentQueryBuilder = documentQueryBuilder.Where(whereClause)
+	}
+
+	// Add limit/offset to SQL query
+	documentQueryBuilder = query.ApplyPagination(documentQueryBuilder)
+
+	// Add order
+	documentQueryBuilder = documentQueryBuilder.OrderBy(meta.DocumentKop.Bedrijfsnummer, meta.DocumentKop.Documentnummer)
+
+	documentQuery, documentQueryArguments, err := documentQueryBuilder.ToSql()
+	if err != nil {
+		return "", nil, err
+	}
+
+	documentSegmentQueryBuilder := squirrel.Select(
 		mustache.Render(`
 			{{koptabel}}.{{bedrijfsnummer}},
 			{{koptabel}}.{{documentnummer}},
@@ -186,21 +212,38 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 			 {{koptabel}}.{{boekjaar}} = {{segmenttabel}}.{{boekjaar}}`,
 			nameTable,
 		),
+	).Where(
+		mustache.Render(
+			`({{koptabel}}.{{bedrijfsnummer}}, {{koptabel}}.{{documentnummer}}, {{koptabel}}.{{boekjaar}}) IN (SELECT {{bedrijfsnummer}}, {{documentnummer}}, {{boekjaar}} FROM {{paginatabel}})`,
+			nameTable,
+		),
 	)
 
-	// Add where clauses to SQL query
-	for _, whereClause := range *query.whereClauses {
-		builder = builder.Where(whereClause)
-	}
-
-	// Add limit/offset to SQL query
-	builder = query.ApplyPagination(builder)
-
 	// Add order
-	builder = builder.OrderBy(
+	documentSegmentQueryBuilder = documentSegmentQueryBuilder.OrderBy(
 		meta.DocumentKop.Table+"."+meta.DocumentKop.Bedrijfsnummer,
 		meta.DocumentKop.Table+"."+meta.DocumentKop.Documentnummer,
 		meta.DocumentSegment.Boekingsregelnummer)
 
-	return builder.ToSql()
+	documentSegmentQuery, documentSegmentArguments, err := documentSegmentQueryBuilder.ToSql()
+	if err != nil {
+		return "", nil, err
+	}
+
+	nameTable["documentQuery"] = documentQuery
+	nameTable["documentSegmentQuery"] = documentSegmentQuery
+
+	resultQuery := mustache.Render(
+		`
+			WITH {{paginatabel}} AS (
+				{{documentQuery}}
+			)
+			{{documentSegmentQuery}}
+		`,
+		nameTable,
+	)
+
+	slog.Debug(resultQuery)
+
+	return resultQuery, append(documentQueryArguments, documentSegmentArguments...), nil
 }

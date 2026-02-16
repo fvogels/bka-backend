@@ -1,0 +1,17 @@
+version: 2
+builds:
+  - id: bka-backend
+    main: ./main.go
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+    goamd64:
+      - v1
+
+archives:
+  - id: archive
+    ids: [ bctbackend ]
+    formats: [ binary ]
+    name_template: "bka-backend"

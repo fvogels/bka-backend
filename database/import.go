@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"log/slog"
 
 	"github.com/Masterminds/squirrel"
 )
@@ -72,6 +73,24 @@ func importSegmentData(db *sql.DB, reader io.Reader) error {
 	if err != nil {
 		return fmt.Errorf("failed to read csv segment data: %w", err)
 	}
+
+	block := [][]string{}
+	for index, row := range rows {
+		block = append(block, row)
+
+		if index%100 == 0 {
+			importSegmentDataBlock(db, block)
+			block = [][]string{}
+		}
+	}
+
+	importSegmentDataBlock(db, block)
+
+	return nil
+}
+
+func importSegmentDataBlock(db *sql.DB, rows [][]string) error {
+	slog.Debug("Writing block of segments", slog.Int("rowCount", len(rows)))
 
 	builder := squirrel.Insert(meta.DocumentSegment.Table).Columns(
 		meta.DocumentSegment.Bedrijfsnummer,

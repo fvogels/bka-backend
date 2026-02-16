@@ -12,6 +12,6 @@ builds:
 
 archives:
   - id: archive
-    ids: [ bctbackend ]
+    ids: [ bka-backend ]
     formats: [ binary ]
     name_template: "bka-backend"

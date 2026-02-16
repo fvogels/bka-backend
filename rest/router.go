@@ -87,6 +87,10 @@ func createGinRouter() *gin.Engine {
 }
 
 func (server *Server) defineEndPoints() {
+	server.router.NoRoute(func(context *gin.Context) {
+		context.File(config.HTMLPath)
+	})
+
 	server.router.GET("/api/v1/documents", server.addDatabaseParameter(document.Handle))
 }
 

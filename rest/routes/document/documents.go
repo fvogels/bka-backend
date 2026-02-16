@@ -6,6 +6,7 @@ import (
 	"bass-backend/util"
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -101,6 +102,7 @@ func (endpoint *documentEndpoint) respondWithList(paginationInformation *paginat
 
 	documents, err := query.Execute(endpoint.database)
 	if err != nil {
+		slog.Debug("Error while executing query on database", slog.String("error", err.Error()))
 		context.String(http.StatusInternalServerError, err.Error())
 		return
 	}

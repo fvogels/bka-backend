@@ -107,6 +107,8 @@ func (endpoint *documentEndpoint) respondWithList(paginationInformation *paginat
 		return
 	}
 
+	slog.Debug("Listed documents", slog.Int("documentCount", len(documents)))
+
 	response := ListResponse{
 		Documents: documents,
 	}

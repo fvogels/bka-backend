@@ -7,6 +7,7 @@ import (
 	"bass-backend/util"
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/hoisie/mustache"
@@ -241,6 +242,8 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 		`,
 		nameTable,
 	)
+
+	slog.Debug(resultQuery)
 
 	return resultQuery, append(documentQueryArguments, documentSegmentArguments...), nil
 }

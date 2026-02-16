@@ -194,7 +194,7 @@ func (endpoint *documentEndpoint) processBoekjaarQueryParameter(query query) err
 }
 
 func (endpoint *documentEndpoint) processDocumentnummerIntervalQueryParameter(query query) error {
-	if documentnummerIntervalString := endpoint.context.Query("interval"); len(documentnummerIntervalString) > 0 {
+	if documentnummerIntervalString := endpoint.context.Query("nr"); len(documentnummerIntervalString) > 0 {
 		bounds := strings.Split(documentnummerIntervalString, "-")
 
 		if len(bounds) != 2 {

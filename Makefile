@@ -7,11 +7,15 @@ clean:
 newdb:
 	go run . database create
 
-populate:
+generate:
 	ruby ./generate-data.rb ./documents.csv ./segments.csv
+
+populate:
 	go run . -v database import --documents ./documents.csv --segments ./segments.csv
 
-fullinit: clean newdb populate
+resetdb: clean newdb populate
+
+fullinit: clean newdb generate populate
 
 .PHONY: rest
 rest:

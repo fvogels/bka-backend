@@ -1,4 +1,4 @@
-# Table
+# Database Tables
 
 ## `BKPF`
 

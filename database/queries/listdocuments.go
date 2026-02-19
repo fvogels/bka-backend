@@ -58,12 +58,12 @@ func (query *ListDocumentsQuery) Execute(db *sql.DB) ([]*model.Document, error) 
 		var boekmaand string
 		var invoerdatum string
 		var invoertijd string
-		var boekingsregelnummer string
-		var boekingsregelidentificatie string
-		var vereffeningsdatum string
-		var vereffeningsinvoerdatum string
-		var vereffeningsdocument string
-		var boekingssleutel string
+		var boekingsregelnummer *string
+		var boekingsregelidentificatie *string
+		var vereffeningsdatum *string
+		var vereffeningsinvoerdatum *string
+		var vereffeningsdocument *string
+		var boekingssleutel *string
 
 		if err := rows.Scan(&bedrijfsnummer, &documentnummer, &boekjaar, &documentsoort, &documentdatum, &boekingsdatum, &boekmaand, &invoerdatum, &invoertijd, &boekingsregelnummer, &boekingsregelidentificatie, &vereffeningsdatum, &vereffeningsinvoerdatum, &vereffeningsdocument, &boekingssleutel); err != nil {
 			return nil, err
@@ -103,38 +103,40 @@ func (query *ListDocumentsQuery) Execute(db *sql.DB) ([]*model.Document, error) 
 				Boekmaand:      model.BoekMaand(boekmaand),
 				InvoerDatum:    parsedInvoerDatum,
 				InvoerTijd:     parsedInvoerTijd,
-				Segmenten:      nil,
+				Segmenten:      make([]model.Segment, 0, 5), // nil would cause null to appear in json
 			}
 
 			table[key] = document
 			documents = append(documents, document)
 		}
 
-		parsedBoekingsregelnummer, err := util.ParseInt(boekingsregelnummer)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse boekingsregelnummer: %w", err)
-		}
+		if boekingsregelnummer != nil {
+			parsedBoekingsregelnummer, err := util.ParseInt(*boekingsregelnummer)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse boekingsregelnummer: %w", err)
+			}
 
-		parsedVereffeningsdatum, err := model.ParseYYYYMMSS(vereffeningsdatum)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse vereffeningsdatum")
-		}
+			parsedVereffeningsdatum, err := model.ParseYYYYMMSS(*vereffeningsdatum)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse vereffeningsdatum")
+			}
 
-		parsedVereffeningsinvoerdatum, err := model.ParseYYYYMMSS(vereffeningsinvoerdatum)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse vereffeningsinvoerdatum")
-		}
+			parsedVereffeningsinvoerdatum, err := model.ParseYYYYMMSS(*vereffeningsinvoerdatum)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse vereffeningsinvoerdatum")
+			}
 
-		segment := model.Segment{
-			Regelnummer:               parsedBoekingsregelnummer,
-			RegelIdentificatie:        boekingsregelidentificatie,
-			VereffeningDatum:          parsedVereffeningsdatum,
-			VereffeningInvoerDatum:    parsedVereffeningsinvoerdatum,
-			VereffeningDocumentNummer: model.NewDocumentNummer(vereffeningsdocument),
-			BoekingSleutel:            model.BoekingSleutel(boekingssleutel),
-		}
+			segment := model.Segment{
+				Regelnummer:               parsedBoekingsregelnummer,
+				RegelIdentificatie:        *boekingsregelidentificatie,
+				VereffeningDatum:          parsedVereffeningsdatum,
+				VereffeningInvoerDatum:    parsedVereffeningsinvoerdatum,
+				VereffeningDocumentNummer: model.NewDocumentNummer(*vereffeningsdocument),
+				BoekingSleutel:            model.BoekingSleutel(*boekingssleutel),
+			}
 
-		document.Segmenten = append(document.Segmenten, segment)
+			document.Segmenten = append(document.Segmenten, segment)
+		}
 	}
 
 	return documents, nil
@@ -204,7 +206,7 @@ func (query *ListDocumentsQuery) buildSQLQuery() (string, []any, error) {
 			{{vereffeningsdocument}},
 			{{boekingssleutel}}
 		`, nameTable),
-	).From(meta.DocumentKop.Table).InnerJoin(
+	).From(meta.DocumentKop.Table).LeftJoin(
 		mustache.Render(
 			`{{segmenttabel}} ON {{koptabel}}.{{bedrijfsnummer}} = {{segmenttabel}}.{{bedrijfsnummer}} AND
 			 {{koptabel}}.{{documentnummer}} = {{segmenttabel}}.{{documentnummer}} AND
